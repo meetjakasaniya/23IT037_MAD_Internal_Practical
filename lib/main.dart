@@ -6,6 +6,8 @@ import 'config/app_theme.dart';
 import 'config/routes.dart';
 import 'models/product.dart';
 import 'utils/gst_calculation.dart';
+import 'providers/cart_provider.dart';
+import 'screens/billing_screen.dart';
 
 void main() async {
   // Initialize Hive Database
@@ -35,8 +37,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        // Add providers here
-        // Example: ChangeNotifierProvider(create: (_) => BillingProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: const GSTBillingApp(),
     ),
@@ -52,8 +53,9 @@ class GSTBillingApp extends StatelessWidget {
       title: 'GST Billing App',
       theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
-      routes: AppRoutes.routes,
+      home: const BillingScreen(),
+      // Remove the routes property or ensure it does NOT contain '/'
+      // routes: AppRoutes.routes, // <-- REMOVE or comment this line
     );
   }
 }
