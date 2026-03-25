@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../screens/home_screen.dart';
-import '../screens/invoice_screen.dart';
 import '../screens/history_screen.dart';
+import '../models/invoice.dart';
+import '../screens/invoice_screen.dart';
 
 class AppRoutes {
   // Route names
@@ -13,7 +14,6 @@ class AppRoutes {
   // Routes map for navigation
   static Map<String, WidgetBuilder> routes = {
     home: (context) => const HomeScreen(),
-    invoice: (context) => const InvoiceScreen(),
     history: (context) => const HistoryScreen(),
   };
 }
