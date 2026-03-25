@@ -4,11 +4,34 @@ import 'package:provider/provider.dart';
 
 import 'config/app_theme.dart';
 import 'config/routes.dart';
+import 'models/product.dart';
+import 'utils/gst_calculation.dart';
 
 void main() async {
   // Initialize Hive Database
   await Hive.initFlutter();
   
+  // Example usage of Product model and GST calculation logic
+  final products = [
+    Product(name: 'Notebook', price: 100.0, gstRate: 12),
+    Product(name: 'Pen', price: 20.0, gstRate: 5),
+    Product(name: 'Backpack', price: 500.0, gstRate: 18),
+    Product(name: 'Luxury Watch', price: 10000.0, gstRate: 28),
+  ];
+
+  for (var product in products) {
+    final cgst = calculateCGST(product.price, product.gstRate);
+    final sgst = calculateSGST(product.price, product.gstRate);
+    final total = calculateTotalPrice(product.price, product.gstRate);
+    print('Product: ${product.name}');
+    print('  Price: ₹${product.price.toStringAsFixed(2)}');
+    print('  GST Rate: ${product.gstRate}%');
+    print('  CGST: ₹${cgst.toStringAsFixed(2)}');
+    print('  SGST: ₹${sgst.toStringAsFixed(2)}');
+    print('  Total Price: ₹${total.toStringAsFixed(2)}');
+    print('---');
+  }
+
   runApp(
     MultiProvider(
       providers: [
