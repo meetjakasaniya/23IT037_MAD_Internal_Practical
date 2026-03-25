@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
 import '../utils/gst_calculation.dart';
+import 'invoice_screen.dart';
+import '../models/invoice.dart';
 
 class BillingScreen extends StatefulWidget {
   const BillingScreen({Key? key}) : super(key: key);
@@ -154,6 +156,24 @@ class _BillingScreenState extends State<BillingScreen> {
                         );
                       },
                     ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: cart.products.isEmpty
+                    ? null
+                    : () {
+                        final invoice = Invoice(products: List.from(cart.products));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => InvoiceScreen(invoice: invoice),
+                          ),
+                        );
+                      },
+                child: const Text('Generate Invoice'),
+              ),
             ),
           ],
         ),
