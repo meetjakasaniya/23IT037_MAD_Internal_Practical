@@ -39,9 +39,8 @@ class InvoiceScreen extends StatelessWidget {
                   ),
                   const Divider(),
                   Expanded(
-                    child: ListView.separated(
+                    child: ListView.builder(
                       itemCount: products.length,
-                      separatorBuilder: (_, __) => const Divider(),
                       itemBuilder: (context, index) {
                         final p = products[index];
                         final cgst = calculateCGST(p.price, p.gstRate);

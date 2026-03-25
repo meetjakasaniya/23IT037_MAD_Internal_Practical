@@ -19,6 +19,7 @@ class _BillingScreenState extends State<BillingScreen> {
   final _nameController = TextEditingController();
   final _priceController = TextEditingController();
   double? _selectedGstRate;
+  String _searchQuery = '';
 
   final List<double> _gstRates = [5, 12, 18, 28];
 
@@ -45,6 +46,11 @@ class _BillingScreenState extends State<BillingScreen> {
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
+    final filteredProducts = cart.products.where((product) {
+      final query = _searchQuery.toLowerCase();
+      return product.name.toLowerCase().contains(query) ||
+          product.price.toString().contains(query);
+    }).toList();
     return Scaffold(
       appBar: AppBar(
         title: const Text('GST Billing App'),
@@ -55,6 +61,31 @@ class _BillingScreenState extends State<BillingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search products by name or price',
+                        prefixIcon: const Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                      ),
+                      onChanged: (value) => setState(() => _searchQuery = value),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () => setState(() => _searchQuery = ''),
+                  ),
+                ],
+              ),
+            ),
             Form(
               key: _formKey,
               child: Column(
@@ -117,13 +148,13 @@ class _BillingScreenState extends State<BillingScreen> {
             ),
             const SizedBox(height: 8),
             Expanded(
-              child: cart.products.isEmpty
+              child: filteredProducts.isEmpty
                   ? const Center(child: Text('No products in cart.'))
                   : ListView.separated(
-                      itemCount: cart.products.length,
+                      itemCount: filteredProducts.length,
                       separatorBuilder: (_, __) => const Divider(),
                       itemBuilder: (context, index) {
-                        final product = cart.products[index];
+                        final product = filteredProducts[index];
                         final cgst = calculateCGST(product.price, product.gstRate);
                         final sgst = calculateSGST(product.price, product.gstRate);
                         final total = calculateTotalPrice(product.price, product.gstRate);
@@ -136,7 +167,8 @@ class _BillingScreenState extends State<BillingScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: const Icon(Icons.delete, color: Colors.white),
                           ),
-                          onDismissed: (_) => cart.removeProduct(index),
+                          onDismissed: (_) => cart.removeProduct(
+                            cart.products.indexOf(product)),
                           child: ListTile(
                             title: Text(product.name),
                             subtitle: Column(
@@ -150,7 +182,8 @@ class _BillingScreenState extends State<BillingScreen> {
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete),
-                              onPressed: () => cart.removeProduct(index),
+                              onPressed: () => cart.removeProduct(
+                                cart.products.indexOf(product)),
                             ),
                           ),
                         );
